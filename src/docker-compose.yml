@@ -1,0 +1,51 @@
+version: "3.5"
+services:
+
+  mongodb:
+    container_name: mongodb
+    image: mongo:latest
+    command:
+        - mongod
+    environment:
+        - MONGO_INITDB_DATABASE=admin
+        - MONGO_INITDB_ROOT_USERNAME=admin
+        - MONGO_INITDB_ROOT_PASSWORD=IvaMongoAdmin
+    volumes:
+        - ./mongo_db/mongod.conf.orig:/etc/mongod.conf.orig
+        - mongodb:/data/db
+    ports:
+        - 27017:27017
+    restart: unless-stopped
+    networks:
+      - app-network  
+
+
+
+  app-01:
+    build: ./app-01
+    image: app-01:v1
+    container_name: app-01
+    restart: always
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app-01:/app
+    networks:
+      - app-network  
+
+  app-02:
+    build: ./app-02
+    image: app-02:v1
+    container_name: app-02
+    restart: always
+    ports:
+      - "8002:8002"
+    volumes:
+      - ./app-02:/app
+    networks:
+      - app-network  
+networks:
+  app-network:
+
+volumes:
+  mongodb:
